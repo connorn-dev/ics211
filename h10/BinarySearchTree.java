@@ -1,9 +1,15 @@
 package edu.ics211.h10;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * Class represents the Binary Search Tree. 
+ * 
+ * @author narowetz
+ * @param <E> element/object
+ */ 
 public class BinarySearchTree<E> implements InOrder<E>, SearchTree<E> {
 
   // Search Tree Variables
@@ -14,6 +20,8 @@ public class BinarySearchTree<E> implements InOrder<E>, SearchTree<E> {
   // Return method variables
   private boolean addMethod; 
   private boolean deleteMethod; 
+  private E returnDelete; 
+  List<E> list = new ArrayList<E>(); 
   
   /**
    * Constructor for our Binary Search Tree. 
@@ -63,14 +71,14 @@ public class BinarySearchTree<E> implements InOrder<E>, SearchTree<E> {
     }
   }
   
-  
-  
-  
-
   @Override
   public boolean contains(E item) {
-    // TODO Auto-generated method stub
-    return false;
+    // Run the find method and based on results return true or false
+    if (find(item) != null) {
+      return true; 
+    } else {
+      return false; 
+    }
   }
 
   @Override
@@ -80,19 +88,70 @@ public class BinarySearchTree<E> implements InOrder<E>, SearchTree<E> {
   }
   
   private E findRecursive(BinaryNode<E> currentNode, E target) {
-    return null;
+    if (currentNode == null) {
+      return null;
+    }
+    if (comp.compare(target, currentNode.item) == 0) {
+      return currentNode.item;
+    } else if (comp.compare(target, currentNode.item) < 0) {
+      return findRecursive(currentNode.left, target);
+    } else {
+      return findRecursive(currentNode.right, target); 
+    }
   }
 
   @Override
   public E delete(E target) {
-    // TODO Auto-generated method stub
-    return null;
+    // Start with the first recursive call
+    size--; 
+    root = deleteRecursive(root, (E) target);
+    return returnDelete; 
   }
-
+  
+  private BinaryNode<E> deleteRecursive(BinaryNode<E> currentNode, E item) {
+    if (currentNode == null) {
+      returnDelete = null; 
+      deleteMethod = false; 
+      return currentNode; 
+    }
+    if (comp.compare(item, currentNode.item) < 0) {
+      currentNode.left = deleteRecursive(currentNode.left, item);
+      return currentNode;
+    } else if (comp.compare(item, currentNode.item) > 0) {
+      currentNode.right = deleteRecursive(currentNode.right, item);
+      return currentNode;
+    } else {
+      return replace(currentNode); 
+    }
+    
+  }
+  
+  private BinaryNode<E> replace(BinaryNode<E> currentNode) {
+    returnDelete = currentNode.item;
+    // Base case
+    if (currentNode.left == null) {
+      return currentNode.right; 
+    } else if (currentNode.right == null) {
+      return currentNode.left; 
+    } else {
+      if (currentNode.left.right == null) {
+        currentNode.item = currentNode.left.item; 
+        currentNode.left = currentNode.left.left; 
+        return currentNode; 
+      } else {
+        currentNode.item = find(currentNode.left.item);
+        return currentNode; 
+      }
+    }
+  }
+  
+  
   @Override
   public boolean remove(E target) {
-    // TODO Auto-generated method stub
-    return false;
+    deleteMethod = true; 
+    size--; 
+    root = deleteRecursive(root, target);
+    return deleteMethod; 
   }
 
   @Override
@@ -102,10 +161,21 @@ public class BinarySearchTree<E> implements InOrder<E>, SearchTree<E> {
 
   @Override
   public List<E> inorder() {
-    // TODO Auto-generated method stub
-    return null;
+    // First call to inorder
+    List<E> newList = inorder(root);
+    return newList;
   }
-
-
-
+  
+  // (Source: https://www.java67.com/2016/08/binary-tree-inorder-traversal-in-java.html)
+  private List<E> inorder(BinaryNode<E> currentNode) {
+    // Check if root is null
+    if (currentNode == null) {
+      return list; 
+    }
+    // Go left, then go right
+    inorder(currentNode.left);
+    list.add(currentNode.item);
+    inorder(currentNode.right); 
+    return list; 
+  }
 }

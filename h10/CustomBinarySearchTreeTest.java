@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Comparator;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-
 
 class CustomBinarySearchTreeTest {
 
@@ -23,8 +23,25 @@ class CustomBinarySearchTreeTest {
     // Add the second element and third element
     tree.add("audi");
     tree.add("mb"); 
-    // Make sure they all exist in the right spot 
-    assertFalse(tree.add("bmw")); 
+    // Make sure the size is correct
+    assertEquals(3, tree.size()); 
+    // Remove an element and make sure it is the same size and the 
+    // other elements exist
+    tree.remove("mb");
+    assertFalse(tree.add("bmw"));
+    assertFalse(tree.add("audi"));
+    // Add some more elements
+    tree.add("a");
+    tree.add("ferrari");
+    // See if tree contains the elements 
+    assertTrue(tree.contains("a"));
+    assertTrue(tree.contains("ferrari")); 
+    // Finally check that all the elements are in order correctly 
+    List<String> cars = tree.inorder();
+    assertEquals("a", cars.get(0));
+    assertEquals("bmw", cars.get(1));
+    assertEquals("audi", cars.get(2));
+    assertEquals("ferrari", cars.get(3));
   }
 
 }
